@@ -8,11 +8,19 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  username String @unique
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  username String  @unique
+  name     String
+  verified Boolean
 
-  posts Post[]
+  notificationSetting NotificationSettings[]
+  posts               Post[]
+  replies             Reply[]
+
+  // Implicit many-many
+  postsLiked    Post[] @relation("PostLikes")
+  postsFollowed Post[] @relation("PostFollows")
 }
 
 model Post {
@@ -24,5 +32,36 @@ model Post {
   userId    Int
   published Boolean  @default(false)
 
+  tags    Tag[]
+  replies Reply[]
+  author  User    @relation(fields: [userId], references: [id])
+
+  // Implicit many-many
+  likes   User[] @relation("PostLikes")
+  follows User[] @relation("PostFollows")
+}
+
+model Reply {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  postId    Int
+
   author User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  post Post[]
+}
+
+enum NotificationSettings {
+  SECURITY
+  MARKETING
+  POSTS
 }
