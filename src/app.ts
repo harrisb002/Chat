@@ -3,6 +3,7 @@ import express from "express";
 import usersRouter from "./routes/users.js";
 import postsRouter from "./routes/posts.js";
 import repliesRouter from "./routes/replies.js";
+import authRouter from "./routes/auth.js";
 
 import logging from "./middleware/logging.js";
 import errors from "./middleware/errors.js";
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 });
 
 // Definining versioning to prefix the route
+app.use("/v1/auth", authRouter);
 app.use("/v1/users", usersRouter);
 app.use("/v1/posts", postsRouter);
 app.use("/v1/replies", repliesRouter);
