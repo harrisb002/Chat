@@ -25,3 +25,7 @@
 ### Replies
 
 `/replies/:id` - GET, PATCH, DELETE
+
+### General Notes
+
+- In prisma, PUT requests implicitly act as PATCH requests and must be made to explicitly change all desired fields in request body.

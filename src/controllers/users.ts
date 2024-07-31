@@ -38,7 +38,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 // Typing to RequestHandler to automatically know what the request types are implicitly
 export const updateUser: RequestHandler = async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = req.user.userId;
   const user = await prisma.user.update({
     where: {
       id: userId,
@@ -49,7 +49,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 };
 
 export const deleteUser: RequestHandler = async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = req.user.userId;
   const result = await prisma.user.delete({
     where: {
       id: userId,

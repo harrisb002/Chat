@@ -7,38 +7,158 @@ import express, {
 
 import prisma from "../prisma.js";
 
-export const getPosts: RequestHandler = (req, res) => {
-  res.json({ message: "getPosts hit" });
+export const getPosts: RequestHandler = async (req, res) => {
+  const posts = await prisma.post.findMany();
+  res.json({ posts });
 };
 
-export const createPost: RequestHandler = (req, res) => {
-  res.json({ message: "createPost hit" });
+export const createPost: RequestHandler = async (req, res) => {
+  const userId = req.user.userId;
+  const body = req.body;
+  body.userId = userId;
+  const post = await prisma.post.create({
+    data: body,
+  });
+  res.status(201).json(post);
 };
 
-export const getPost: RequestHandler = (req, res) => {
-  res.json({ message: "getPost hit" });
+export const getPost: RequestHandler = async (req, res, next) => {
+  const postId = Number.parseInt(req.params.id);
+  const post = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+    include: {
+      replies: true,
+    },
+  });
+
+  if (!post) {
+    return next(new Error("404"));
+  }
+  res.json({ post });
 };
 
-export const updatePost: RequestHandler = (req, res) => {
-  res.json({ message: "updatePost hit" });
+export const updatePost: RequestHandler = async (req, res, next) => {
+  const postId = Number.parseInt(req.params.id);
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: req.body,
+  });
+  if (!post) {
+    return next(new Error("404"));
+  }
+  res.json({ post });
 };
 
-export const deletePost: RequestHandler = (req, res) => {
-  res.json({ message: "deletePost hit" });
+export const deletePost: RequestHandler = async (req, res, next) => {
+  const postId = Number.parseInt(req.params.id);
+  const result = await prisma.post.delete({
+    where: { id: postId },
+  });
+  res.sendStatus(200);
 };
 
-export const createLike: RequestHandler = (req, res) => {
-  res.json({ message: "createLike hit" });
+export const getReplies: RequestHandler = async (req, res, next) => {
+  const postId = Number.parseInt(req.params.id);
+  const post = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+    include: {
+      replies: true,
+    },
+  });
+
+  if (!post) {
+    return next(new Error("404"));
+  }
+  res.json({ replies: post.replies });
 };
 
-export const deleteLike: RequestHandler = (req, res) => {
-  res.json({ message: "deleteLike hit" });
+export const createLike: RequestHandler = async (req, res) => {
+  const postId = Number.parseInt(req.params.id);
+  // Using userId custom type so that it is not part of the params
+  const userId = req.user.userId;
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      likes: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+  res.status(201).json({ postLikeCount: post._count.likes });
 };
 
-export const createFollow: RequestHandler = (req, res) => {
-  res.json({ message: "createFollow hit" });
+export const deleteLike: RequestHandler = async (req, res) => {
+  const userId = req.user.userId;
+  const postId = parseInt(req.params.id);
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      likes: {
+        disconnect: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+
+  res.json({ postLikeCount: post._count.likes });
 };
 
-export const deleteFollow: RequestHandler = (req, res) => {
-  res.json({ message: "deleteFollow hit" });
+export const createFollow: RequestHandler = async (req, res) => {
+  const postId = Number.parseInt(req.params.id);
+  const userId = req.user.userId;
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      follows: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+  res.status(201).json({ postFollowCount: post._count.follows });
+};
+
+export const deleteFollow: RequestHandler = async (req, res) => {
+  const userId = req.user.userId;
+  const postId = parseInt(req.params.id);
+
+  const post = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      follows: {
+        disconnect: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+
+  res.json({ postFollowCount: post._count.follows });
+};
+
+export const createReply: RequestHandler = async (req, res) => {
+  res.json({ message: " hit" });
 };

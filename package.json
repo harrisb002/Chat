@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "nodemon --ext ts,js,json --exec 'node --no-warnings --loader ts-node/esm src/app.ts'"
+    "dev": "nodemon --files --ext ts,js,json --exec 'node --no-warnings --loader ts-node/esm src/app.ts'"
   },
   "author": "",
   "license": "ISC",

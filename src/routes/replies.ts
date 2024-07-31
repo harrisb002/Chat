@@ -4,7 +4,7 @@ import * as repliesController from "../controllers/replies.js";
 const router = express.Router();
 
 router.get("/:id", repliesController.getReply);
-router.post("/:id", repliesController.createReply);
+router.patch("/:id", repliesController.updateReply);
 router.delete("/:id", repliesController.deleteReply);
 
 export default router;
