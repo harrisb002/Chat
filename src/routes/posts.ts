@@ -11,7 +11,7 @@ router.patch("/:id", postsController.updatePost);
 router.delete("/:id", postsController.deletePost);
 
 router.get("/:id/replies", postsController.getReplies);
-router.patch("/:id", postsController.createReply);
+router.post("/:id/replies", postsController.createReply);
 
 router.post("/:id/likes", postsController.createLike);
 router.delete("/:id/likes", postsController.deleteLike);

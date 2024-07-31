@@ -160,5 +160,13 @@ export const deleteFollow: RequestHandler = async (req, res) => {
 };
 
 export const createReply: RequestHandler = async (req, res) => {
-  res.json({ message: " hit" });
+  const postId = parseInt(req.body.id);
+  const body = req.body;
+  body.userId = req.user.userId;
+
+  const reply = await prisma.reply.create({
+    data: body,
+  });
+
+  res.json({ reply });
 };
