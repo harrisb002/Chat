@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
+import z from "zod";
 
 export class ValidationError extends Error {
-  constructor(public validationErrors: any) {
-    super("Validation Error"), (this.name = this.constructor.name);
+  constructor(public validationErrors: z.ZodIssue[]) {
+    super("Validation Error");
+    this.name = this.constructor.name;
   }
 }
 

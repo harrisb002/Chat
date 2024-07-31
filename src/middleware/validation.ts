@@ -18,4 +18,4 @@ export const validateBody =
   };
 
 export const createUser = validateBody(schemas.User);
-export const updateUser = validateBody(schemas.User);
+export const updateUser = validateBody(schemas.UserUpdate);

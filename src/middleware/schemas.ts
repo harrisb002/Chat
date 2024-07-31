@@ -16,6 +16,11 @@ export const User = z.object({
   postReplies: z.array(z.lazy(() => Reply)),
 });
 
+// The user will act as a base type for the user endpoints
+// Takes all the properties of User, and makes them optional
+// This is needed for the Patch, as not all properties defined are required to be changed
+export const UserUpdate = User.partial();
+
 export const Post = z.object({
   id: z.number().int().nonnegative().optional(),
 });
