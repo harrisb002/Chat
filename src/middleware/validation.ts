@@ -1,23 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { body, validationResult } from "express-validator";
+import { Request, Response, NextFunction, RequestHandler } from "express";
+import z, { ZodType } from "zod";
+import * as schemas from "./schemas.js";
+import { ValidationError } from "./errors.js";
 
-const validate = (req: Request, res: Response, next: NextFunction) => {
-  const result = validationResult(req);
+// Using higher order function to return a function
+// The first function is returning the () => {}
+export const validateBody =
+  (schema: ZodType<any>): RequestHandler =>
+  (req, res, next) => {
+    const result = schema.safeParse(req.body);
 
-  if (!result.isEmpty()) {
-    return res.status(400).json({ errors: result.array() });
-  }
+    if (!result.success) {
+      return next(new ValidationError(result.error.issues)); // Handling errors using custom Error
+    }
 
-  next();
-};
+    next();
+  };
 
-const validateAccount = [
-  body("email").isEmail().withMessage("Invalid email").escape(),
-  body("username")
-    .isLength({ min: 5, max: 50 })
-    .withMessage("username must be 5-50 characters")
-    .escape(),
-  validate,
-];
-
-export default { validateAccount };
+export const createUser = validateBody(schemas.User);
+export const updateUser = validateBody(schemas.User);

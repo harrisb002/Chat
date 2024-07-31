@@ -24,6 +24,7 @@
     "express": "^5.0.0-beta.3",
     "express-validator": "^7.1.0",
     "postgresql": "^0.0.1",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "zod": "^3.23.8"
   }
 }

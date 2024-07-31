@@ -1,10 +1,20 @@
 import { Request, Response, NextFunction } from "express";
+
+export class ValidationError extends Error {
+  constructor(public validationErrors: any) {
+    super("Validation Error"), (this.name = this.constructor.name);
+  }
+}
+
 const errorHandler = (
   err: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  if (err instanceof ValidationError) {
+    res.status(400).json({ errors: err.validationErrors });
+  }
   if (err.message === "404" || err.code === "P2025") {
     //P2025 is for deleting a resource that has already been deleted
     return res.status(404).json({ error: "Resource not found" });
