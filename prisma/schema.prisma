@@ -13,6 +13,7 @@ model User {
   username String  @unique
   name     String
   verified Boolean @default(true)
+  password String
 
   notificationSetting NotificationSettings[]
   posts               Post[]
