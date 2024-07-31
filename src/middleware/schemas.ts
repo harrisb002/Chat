@@ -46,7 +46,7 @@ export const PostUpdate = Post.pick({
   title: true,
   tags: true,
   published: true,
-}).strict();
+}).strict(); // Strict makes it so you cant add any new properties to it
 
 export const Reply = z.object({
   id: z.number().int().nonnegative().optional(),
