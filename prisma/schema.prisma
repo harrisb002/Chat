@@ -12,7 +12,7 @@ model User {
   email    String  @unique
   username String  @unique
   name     String
-  verified Boolean
+  verified Boolean @default(true)
 
   notificationSetting NotificationSettings[]
   posts               Post[]

@@ -1,26 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, {
+  NextFunction,
+  Request,
+  Response,
+  RequestHandler,
+} from "express";
+
 import prisma from "../prisma.js";
 
-const getMany = async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany();
-  res.json({ users });
-};
-
-const create = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email: req.body.email,
-        username: req.body.username,
-      },
-    });
-    res.status(201).json({ user });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const get = async (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response) => {
   const id = Number.parseInt(req.params.id);
   const user = await prisma.user.findFirst({
     where: { id: id },
@@ -37,4 +24,47 @@ const get = async (req: Request, res: Response) => {
   res.send(user.username);
 };
 
-export default { getMany, create, get };
+export const getUsers = async (req: Request, res: Response) => {
+  const users = await prisma.user.findMany();
+  res.json({ users });
+};
+
+export const createUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name: req.body.name,
+        email: req.body.email,
+        username: req.body.username,
+      },
+    });
+    res.status(201).json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Typing to RequestHandler to automatically know what the request types are implicitly
+export const updateUser: RequestHandler = (req, res) => {
+  res.json({ message: "updateUser hit" });
+};
+
+export const deleteUser: RequestHandler = (req, res) => {
+  res.json({ message: "deleteUser hit" });
+};
+
+export const getUserPosts: RequestHandler = (req, res) => {
+  res.json({ message: "getUserPosts hit" });
+};
+
+export const getUserLikedPosts: RequestHandler = (req, res) => {
+  res.json({ message: "getUserLikedPosts hit" });
+};
+
+export const getUserFollowedPosts: RequestHandler = (req, res) => {
+  res.json({ message: "getUserFollowedPosts hit" });
+};
