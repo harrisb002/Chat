@@ -5,7 +5,8 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  if (err.message === "404") {
+  if (err.message === "404" || err.code === "P2025") {
+    //P2025 is for deleting a resource that has already been deleted
     return res.status(404).json({ error: "Resource not found" });
   }
 
