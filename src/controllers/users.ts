@@ -7,7 +7,11 @@ import express, {
 
 import prisma from "../prisma.js";
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const id = Number.parseInt(req.params.id);
   const user = await prisma.user.findFirst({
     where: { id: id },
@@ -17,8 +21,8 @@ export const getUser = async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
+    // res.status(404).json({ error: "User not found" });
+    return next(new Error("404")); // Using '404' to match in middleware errors.ts
   }
 
   res.send(user.username);
@@ -34,18 +38,14 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        name: req.body.name,
-        email: req.body.email,
-        username: req.body.username,
-      },
-    });
-    res.status(201).json({ user });
-  } catch (err) {
-    next(err);
-  }
+  const user = await prisma.user.create({
+    data: {
+      name: req.body.name,
+      email: req.body.email,
+      username: req.body.username,
+    },
+  });
+  res.status(201).json({ user });
 };
 
 // Typing to RequestHandler to automatically know what the request types are implicitly
