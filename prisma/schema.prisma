@@ -15,9 +15,9 @@ model User {
   verified Boolean @default(true)
   password String
 
-  notificationSetting NotificationSettings[]
-  posts               Post[]
-  replies             Reply[]
+  notificationSettings NotificationSettings[]
+  posts                Post[]
+  replies              Reply[]
 
   // Implicit many-many
   postsLiked    Post[] @relation("PostLikes")

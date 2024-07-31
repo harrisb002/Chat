@@ -15,11 +15,12 @@ export const User = z.object({
   id: z.number().int().nonnegative().optional(),
   email: z.string().email(),
   username: z.string().min(5, "at least 5 chars").max(50, "at most 50 chars"),
-  verified: z.boolean(),
+  verified: z.boolean().optional(),
+  password: z.string(),
   notificationSettings: z.nativeEnum(NotificationSettings).array().optional(),
   posts: z.array(postLazy).optional(),
   postsLiked: z.array(postLazy).optional(),
-  postReplies: z.array(z.lazy(() => Reply)),
+  postReplies: z.array(z.lazy(() => Reply)).optional(),
 });
 
 // The user will act as a base type for the user endpoints

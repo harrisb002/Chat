@@ -19,11 +19,9 @@ const sanitize = (obj: any): any => {
 };
 
 const xssMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
   if (req.body) {
     req.body = sanitize(req.body);
   }
-  console.log(req.body);
   next();
 };
 

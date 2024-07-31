@@ -4,7 +4,7 @@ import express, {
   Response,
   RequestHandler,
 } from "express";
-
+import bcrypt from "bcrypt";
 import prisma from "../prisma.js";
 
 export const getUsers: RequestHandler = async (req, res) => {
@@ -30,9 +30,17 @@ export const getUser: RequestHandler = async (req, res, next) => {
 };
 
 export const createUser: RequestHandler = async (req, res, next) => {
-  const user = await prisma.user.create({
-    data: req.body,
+  const saltRounds = 10;
+  const hashedPass = await bcrypt.hash(req.body.password, saltRounds);
+
+  // Using spread to include to pass into the body
+  const userDB = await prisma.user.create({
+    data: { ...req.body, password: hashedPass },
   });
+
+  // Using rest op. to remove pass from body
+  const { password, ...user } = userDB;
+
   res.status(201).json({ user });
 };
 

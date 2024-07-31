@@ -8,6 +8,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT true,
+    "password" TEXT NOT NULL,
     "notificationSetting" "NotificationSettings"[],
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
