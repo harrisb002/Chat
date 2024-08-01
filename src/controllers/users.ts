@@ -32,6 +32,7 @@ export const getUser: RequestHandler = async (req, res, next) => {
 // Typing to RequestHandler to automatically know what the request types are implicitly
 export const updateUser: RequestHandler = async (req, res) => {
   const userId = req.user.id;
+  delete req.body.roles;
   const user = await prisma.user.update({
     where: {
       id: userId,

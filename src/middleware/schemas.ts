@@ -18,7 +18,7 @@ export const User = z.object({
   username: z.string().min(5, "at least 5 chars").max(50, "at most 50 chars"),
   verified: z.boolean().optional(),
   password: z.string(),
-  Roles: z.nativeEnum(Roles).array().optional(),
+  roles: z.nativeEnum(Roles).array().optional(),
   notificationSettings: z.nativeEnum(NotificationSettings).array().optional(),
   posts: z.array(postLazy).optional(),
   postsLiked: z.array(postLazy).optional(),
@@ -51,10 +51,7 @@ export const Login = User.pick({
   password: true,
 }).strict();
 
-// The user will act as a base type for the user endpoints
-// Takes all the properties of User, and makes them optional
-// This is needed for the Patch, as not all properties defined are required to be changed
-export const UserUpdate = User.partial();
+export const UserUpdate = User.partial().omit({ roles: true }).strict();
 
 export const Post = z.object({
   id: z.number().int().nonnegative().optional(),
