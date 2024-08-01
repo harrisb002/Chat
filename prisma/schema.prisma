@@ -18,17 +18,21 @@ model User {
   notificationSettings NotificationSettings[]
   posts                Post[]
   replies              Reply[]
-
+  roles                Roles[]
   // Implicit many-many
-  postsLiked    Post[] @relation("PostLikes")
-  postsFollowed Post[] @relation("PostFollows")
+  postsLiked           Post[]                 @relation("PostLikes")
+  postsFollowed        Post[]                 @relation("PostFollows")
+}
+
+enum Roles {
+  ADMIN
 }
 
 model Password {
   id     Int    @id @default(autoincrement())
   userId Int    @unique
   hash   String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Post {

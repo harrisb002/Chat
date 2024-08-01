@@ -31,6 +31,8 @@ export const validateBody =
     next();
   };
 
-export const createUser = validateBody(schemas.User);
+export const createUser = validateBody(schemas.Account);
+export const login = validateBody(schemas.Login);
 export const updateUser = validateBody(schemas.UserUpdate);
+export const updatePost = [validateParamId, validateBody(schemas.PostUpdate)];
 export const createPost = validateBody(schemas.Post);

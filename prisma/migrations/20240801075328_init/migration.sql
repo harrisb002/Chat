@@ -8,10 +8,18 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT true,
-    "password" TEXT NOT NULL,
-    "notificationSetting" "NotificationSettings"[],
+    "notificationSettings" "NotificationSettings"[],
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Password" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "hash" TEXT NOT NULL,
+
+    CONSTRAINT "Password_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -72,6 +80,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Password_userId_key" ON "Password"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
@@ -91,6 +102,9 @@ CREATE UNIQUE INDEX "_PostFollows_AB_unique" ON "_PostFollows"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_PostFollows_B_index" ON "_PostFollows"("B");
+
+-- AddForeignKey
+ALTER TABLE "Password" ADD CONSTRAINT "Password_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

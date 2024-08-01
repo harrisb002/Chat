@@ -1,5 +1,5 @@
 import z from "zod";
-import { NotificationSettings } from "@prisma/client";
+import { NotificationSettings, Roles } from "@prisma/client";
 import { validateBody } from "./validation";
 import * as schemas from "./schemas.js";
 
@@ -14,14 +14,42 @@ const replyLazy: z.ZodLazy<any> = z.lazy(() => Reply);
 export const User = z.object({
   id: z.number().int().nonnegative().optional(),
   email: z.string().email(),
+  name: z.string().max(50, "at most 50 chars"),
   username: z.string().min(5, "at least 5 chars").max(50, "at most 50 chars"),
   verified: z.boolean().optional(),
   password: z.string(),
+  Roles: z.nativeEnum(Roles).array().optional(),
   notificationSettings: z.nativeEnum(NotificationSettings).array().optional(),
   posts: z.array(postLazy).optional(),
   postsLiked: z.array(postLazy).optional(),
   postReplies: z.array(z.lazy(() => Reply)).optional(),
 });
+
+function containsNumber(value: string): boolean {
+  return /\d/.test(value);
+}
+
+function containsSpecial(value: string): boolean {
+  return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value);
+}
+
+export const Account = User.pick({
+  username: true,
+  email: true,
+})
+  .extend({
+    password: z
+      .string()
+      .min(8, "at least 8")
+      .refine(containsNumber, "Must contain atleast 1 number")
+      .refine(containsSpecial, "must contain atleast one special character"),
+  })
+  .strict();
+
+export const Login = User.pick({
+  username: true,
+  password: true,
+}).strict();
 
 // The user will act as a base type for the user endpoints
 // Takes all the properties of User, and makes them optional

@@ -29,18 +29,6 @@ export const getUser: RequestHandler = async (req, res, next) => {
   res.send({ user });
 };
 
-export const createUser: RequestHandler = async (req, res, next) => {
-  const saltRounds = 10;
-  const hashedPass = await bcrypt.hash(req.body.password, saltRounds);
-
-  // Using spread to include to pass into the body
-  const user = await prisma.user.create({
-    data: { ...req.body, password: hashedPass },
-  });
-
-  res.status(201).json({ user });
-};
-
 // Typing to RequestHandler to automatically know what the request types are implicitly
 export const updateUser: RequestHandler = async (req, res) => {
   const userId = req.user.id;
@@ -53,14 +41,20 @@ export const updateUser: RequestHandler = async (req, res) => {
   res.json({ user });
 };
 
-export const deleteUser: RequestHandler = async (req, res) => {
-  const userId = req.user.id;
-  const result = await prisma.user.delete({
-    where: {
-      id: userId,
-    },
-  });
+export const deleteUser: RequestHandler = async (req, res, next) => {
+  del(req.user.id);
   res.sendStatus(200);
+};
+
+export const adminDeleteUser: RequestHandler = async (req, res, next) => {
+  del(parseInt(req.params.id));
+  res.sendStatus(200);
+};
+
+export const del = async (userId: number) => {
+  return await prisma.user.delete({
+    where: { id: userId },
+  });
 };
 
 export const getUserPosts: RequestHandler = async (req, res, next) => {

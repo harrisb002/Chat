@@ -36,9 +36,32 @@ export const login: RequestHandler = async (req, res) => {
   if (!passwordValid) {
     return res.status(401).json({ message: "Invalid password" });
   }
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, roles: user.roles },
+    JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   res.json({ token });
+};
+
+export const register: RequestHandler = async (req, res, next) => {
+  const saltRounds = 10;
+  const hashedPass = await bcrypt.hash(req.body.password, saltRounds);
+
+  // Using spread to include to pass into the body
+  const user = await prisma.user.create({
+    data: {
+      ...req.body,
+      password: {
+        create: {
+          hash: hashedPass,
+        },
+      },
+    },
+  });
+
+  res.status(201).json({ user });
 };
