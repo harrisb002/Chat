@@ -9,6 +9,7 @@ import logging from "./middleware/logging.js";
 import errors from "./middleware/errors.js";
 import xss from "./middleware/xss.js";
 import notFound from "./middleware/notFound.js";
+import authenticated from "./middleware/auth.js";
 
 const app = express();
 const port = 3000;
@@ -17,16 +18,9 @@ app.use(express.json());
 app.use(xss);
 app.use(logging.logRequest);
 
-// Simulating a auth (login) middleware for now
-app.use((req, res, next) => {
-  req.user = {
-    userId: 1,
-  };
-  next();
-});
-
-// Definining versioning to prefix the route
 app.use("/v1/auth", authRouter);
+app.use(authenticated);
+
 app.use("/v1/users", usersRouter);
 app.use("/v1/posts", postsRouter);
 app.use("/v1/replies", repliesRouter);

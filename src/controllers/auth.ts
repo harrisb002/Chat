@@ -15,18 +15,27 @@ export const login: RequestHandler = async (req, res) => {
     where: {
       username,
     },
+    include: { password: true },
   });
 
   if (!user) {
     return res.status(401).json({ message: "invalid username" });
   }
 
-  const passwordValid = await bcrypt.compare(req.body.password, user.password);
-
-  if (!passwordValid) {
-    return res.status(401).json({ message: "invalid password" });
+  if (!user.password?.hash) {
+    return res
+      .status(401)
+      .json({ message: "Error with Account Username or Password" });
   }
 
+  const passwordValid = await bcrypt.compare(
+    req.body.password,
+    user.password.hash
+  );
+
+  if (!passwordValid) {
+    return res.status(401).json({ message: "Invalid password" });
+  }
   const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
     expiresIn: "1h",
   });

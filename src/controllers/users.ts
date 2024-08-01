@@ -34,19 +34,16 @@ export const createUser: RequestHandler = async (req, res, next) => {
   const hashedPass = await bcrypt.hash(req.body.password, saltRounds);
 
   // Using spread to include to pass into the body
-  const userDB = await prisma.user.create({
+  const user = await prisma.user.create({
     data: { ...req.body, password: hashedPass },
   });
-
-  // Using rest op. to remove pass from body
-  const { password, ...user } = userDB;
 
   res.status(201).json({ user });
 };
 
 // Typing to RequestHandler to automatically know what the request types are implicitly
 export const updateUser: RequestHandler = async (req, res) => {
-  const userId = req.user.userId;
+  const userId = req.user.id;
   const user = await prisma.user.update({
     where: {
       id: userId,
@@ -57,7 +54,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 };
 
 export const deleteUser: RequestHandler = async (req, res) => {
-  const userId = req.user.userId;
+  const userId = req.user.id;
   const result = await prisma.user.delete({
     where: {
       id: userId,
